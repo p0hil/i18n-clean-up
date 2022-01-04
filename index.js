@@ -85,7 +85,7 @@ async function findUsagesInFile(file, keys, template) {
 }
 
 async function findUsages(file, dir, options) {
-    const template = "I18n\\.t\\(['\"]:key['\"]\\)";
+    const template = "I18n\\.t\\(['\"]:key['\"][^\\)]*\\)";
     if (options.mask && typeof options.mask !== 'string') {
         console.error(chalk.red.bold('Mask should be a string'));
         return;
