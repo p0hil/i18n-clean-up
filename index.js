@@ -31,7 +31,7 @@ function findDuplicates(file, options, command) {
     let removed = [];
     for (let value in duplicates) {
         let keys = duplicates[value];
-        console.log(`Translation: ${chalk.bold(value)}\nKeys: ${chalk.bold(keys.join(', '))}`);
+        console.log(`Translation "${chalk.bold(value)}", keys: ${chalk.bold(keys.join(', '))}`);
         if (options.remove) {
             keys.shift();
             removed.push(...keys);
@@ -42,7 +42,7 @@ function findDuplicates(file, options, command) {
 
     if (options.remove && removed.length > 0) {
         fs.writeFileSync(fileName, JSON.stringify(json, null, 2));
-        console.log(chalk.green('File was saved successfully!'));
+        console.log(chalk.green('File has been saved successfully!'));
     }
 }
 
@@ -124,13 +124,10 @@ async function findUsages(file, dir, options) {
 
     let results = Object.values(usages).sort((i1, i2) => i2.count - i1.count);
     let removed = [];
-    let total = 0, used = 0, useless = 0;
+    let used = 0, useless = 0;
     for (let item of results) {
-        if (total++ !== 0) {
-            console.log(`-----------------------------------`);
-        }
         if (item.count > 0) {
-            console.log(`Translation "${chalk.bold(item.key)}"\nUsages: ${chalk.bold(item.count)}`);
+            console.log(`Translation "${chalk.bold(item.key)}", usages: ${chalk.bold(item.count)}`);
             used++;
         }
         else {
@@ -143,7 +140,7 @@ async function findUsages(file, dir, options) {
         }
     }
 
-    console.log(chalk.magenta.bold(`\n\nTotal translations: ${total}, used: ${used}, useless ${useless}`));
+    console.log(chalk.magenta.bold(`\nTotal translations: ${results.length}, used: ${used}, useless ${useless}`));
 
     if (options.remove && removed.length > 0) {
         fs.writeFileSync(fileName, JSON.stringify(translations, null, 2));
