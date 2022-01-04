@@ -6,6 +6,8 @@ const path = require("path");
 const _ = require("lodash");
 const chalk = require("chalk");
 
+const template = "I18n\\.t\\(\\s*['\"]:key['\"][^\\)]*\\)";
+
 function findDuplicates(file, options, command) {
     let fileName = path.resolve(file);
     if (!fs.existsSync(fileName)) {
@@ -85,7 +87,6 @@ async function findUsagesInFile(file, keys, template) {
 }
 
 async function findUsages(file, dir, options) {
-    const template = "I18n\\.t\\(\\s*['\"]:key['\"][^\\)]*\\)";
     if (options.mask && typeof options.mask !== 'string') {
         console.error(chalk.red.bold('Mask should be a string'));
         return;
@@ -99,7 +100,7 @@ async function findUsages(file, dir, options) {
 
     let translations = require(fileName);
 
-    const fileRegex = new RegExp('(' + (options.mask || 'js,jsx,ts').split(',').map(_.trim).map(s => '.' + s).join('|') + ')$');
+    const fileRegex = new RegExp('(' + (options.mask || 'js,jsx,ts,tsx').split(',').map(_.trim).map(s => '.' + s).join('|') + ')$');
     let files = findFiles(dir, fileRegex);
 
     let usages = {};
@@ -152,6 +153,13 @@ program
     .description('List all value duplicates in translation file')
     .option('-r, --remove', 'Remove found duplicates')
     .action(findDuplicates);
+
+program
+    .command('template')
+    .description('Show template')
+    .action(function() {
+        console.log(chalk.cyan(template));
+    });
 
 program
     .command('usages <file> <directory>')
