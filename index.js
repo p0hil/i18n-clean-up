@@ -124,13 +124,14 @@ async function findUsages(file, dir, options) {
 
     let results = Object.values(usages).sort((i1, i2) => i2.count - i1.count);
     let removed = [];
-    let c = 0
+    let total = 0, used = 0, useless = 0;
     for (let item of results) {
-        if (c++ !== 0) {
+        if (total++ !== 0) {
             console.log(`-----------------------------------`);
         }
         if (item.count > 0) {
             console.log(`Translation "${chalk.bold(item.key)}"\nUsages: ${chalk.bold(item.count)}`);
+            used++;
         }
         else {
             console.log(`Translation "${chalk.red.bold(item.key)}" have no usages`);
@@ -138,12 +139,15 @@ async function findUsages(file, dir, options) {
                 delete translations[item.key];
                 removed.push(item.key);
             }
+            useless++;
         }
     }
 
+    console.log(chalk.magenta.bold(`\n\nTotal translations: ${total}, used: ${used}, useless ${useless}`));
+
     if (options.remove && removed.length > 0) {
         fs.writeFileSync(fileName, JSON.stringify(translations, null, 2));
-        console.log(chalk.red(`Removing ${removed.length} useless translation(s)`));
+        console.log(chalk.red(`Removed ${removed.length} useless translation(s)`));
         console.log(chalk.green(`File was saved successfully!`));
     }
 }
